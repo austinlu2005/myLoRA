@@ -1,0 +1,26 @@
+model:
+  name: roberta-base
+  type: roberta
+
+task:
+  name: mrpc
+  num_labels: 2
+  max_length: 128
+
+lora:
+  rank: 8
+  alpha: 16
+  dropout: 0.1
+
+training:
+  batch_size: 32
+  num_epochs: 10
+  lr: 5.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  grad_clip: 1.0
+  seed: 42
+  log_steps: 50
+
+output:
+  dir: ./runs/roberta_base_mrpc

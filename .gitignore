@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / editor
+.vscode/
+.idea/
+.DS_Store
+*.swp
+.claude/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# ML artifacts
+runs/
+wandb/
+checkpoints/
+*.pt
+*.ckpt
+*.log
+
+# OS / misc
+Thumbs.db
+
+# External reference material kept locally but not tracked by this repo.
+external/
