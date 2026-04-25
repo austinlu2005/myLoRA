@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import torch
@@ -20,7 +21,11 @@ class Trainer:
         log_steps=50,
         grad_clip=1.0,
         output_dir=None,
+        task_type="classification",
     ):
+        if task_type not in ("classification", "causal_lm"):
+            raise ValueError(f"unknown task_type {task_type!r}")
+        self.task_type = task_type
         self.model = model.to(device)
         self.train_loader = DataLoader(
             train_dataset, batch_size=batch_size, shuffle=True, drop_last=False
@@ -88,28 +93,41 @@ class Trainer:
     @torch.no_grad()
     def evaluate(self):
         self.model.eval()
-        all_preds = []
-        all_labels = []
         total_loss = 0.0
         n_batches = 0
+        all_preds = []
+        all_labels = []
         for batch in self.eval_loader:
             batch = self._move_to_device(batch)
             out = self.model(**batch)
             total_loss += out.loss.item()
             n_batches += 1
-            preds = out.logits.argmax(dim=-1)
-            all_preds.append(preds.detach().cpu())
-            all_labels.append(batch["labels"].detach().cpu())
-        preds = torch.cat(all_preds)
-        labels = torch.cat(all_labels)
-        metrics = {"eval_loss": total_loss / max(n_batches, 1)}
-        if self.compute_metrics is not None:
+            if self.task_type == "classification":
+                preds = out.logits.argmax(dim=-1)
+                all_preds.append(preds.detach().cpu())
+                all_labels.append(batch["labels"].detach().cpu())
+        eval_loss = total_loss / max(n_batches, 1)
+        metrics = {"eval_loss": eval_loss}
+        if self.task_type == "causal_lm":
+            metrics["perplexity"] = math.exp(eval_loss) if eval_loss < 50 else float("inf")
+        if self.compute_metrics is not None and self.task_type == "classification":
+            preds = torch.cat(all_preds)
+            labels = torch.cat(all_labels)
             metrics.update(self.compute_metrics(preds, labels))
         return metrics
 
     def _maybe_save_best(self, metrics):
         if self.output_dir is None:
             return
+        from lora.save_load import save_lora_state_dict
+
+        if self.task_type == "causal_lm":
+            score = -metrics["eval_loss"]  # higher is better → use neg loss
+            if self.best_metric is None or score > self.best_metric:
+                self.best_metric = score
+                save_lora_state_dict(self.model, self.output_dir / "lora_best.pt")
+            return
+
         score_key = next(
             (k for k in ("accuracy", "f1", "matthews_correlation", "pearson") if k in metrics),
             None,
@@ -119,10 +137,7 @@ class Trainer:
         score = metrics[score_key]
         if self.best_metric is None or score > self.best_metric:
             self.best_metric = score
-            from lora.save_load import save_lora_state_dict
-
             save_lora_state_dict(self.model, self.output_dir / "lora_best.pt")
-            torch.save(
-                {k: v for k, v in self.model.state_dict().items() if "classifier" in k},
-                self.output_dir / "classifier_best.pt",
-            )
+            head_state = {k: v for k, v in self.model.state_dict().items() if "classifier" in k}
+            if head_state:
+                torch.save(head_state, self.output_dir / "classifier_best.pt")

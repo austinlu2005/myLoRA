@@ -1,7 +1,7 @@
-from .layers import LoRAConv1D, LoRALinear
+from .layers import LoRAConv1D, LoRAConv1DQV, LoRALinear
 
 
-_LORA_TYPES = (LoRALinear, LoRAConv1D)
+_LORA_TYPES = (LoRALinear, LoRAConv1D, LoRAConv1DQV)
 
 
 def merge_lora(model):

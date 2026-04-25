@@ -1,0 +1,26 @@
+model:
+  name: gpt2-medium
+  type: gpt2
+
+task:
+  name: wikitext
+  config: wikitext-2-raw-v1
+  max_length: 512
+
+lora:
+  rank: 4
+  alpha: 32
+  dropout: 0.1
+
+training:
+  batch_size: 4
+  num_epochs: 3
+  lr: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  grad_clip: 1.0
+  seed: 42
+  log_steps: 100
+
+output:
+  dir: ./runs/gpt2_medium_wikitext
