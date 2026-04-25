@@ -10,11 +10,17 @@ def load_e2e_nlg(tokenizer, max_length=512, cache_dir=None, dataset_name="e2e_nl
     Each example is formatted as `<MR> ||| <reference><eos>`. Prompt tokens
     (the MR plus separator) are masked to -100 so loss is only computed over
     the reference completion. GPT-2's lm head shifts labels internally.
+
+    Loads from the auto-generated parquet mirror at `refs/convert/parquet`
+    so it works on `datasets >= 4.0`, which dropped script-based loaders.
     """
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    raw = load_dataset(dataset_name, cache_dir=cache_dir)
+    try:
+        raw = load_dataset(dataset_name, revision="refs/convert/parquet", cache_dir=cache_dir)
+    except Exception:
+        raw = load_dataset(dataset_name, cache_dir=cache_dir)
     pad_id = tokenizer.pad_token_id
     eos = tokenizer.eos_token
 
