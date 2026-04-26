@@ -105,7 +105,8 @@ def main():
     scheduler = build_scheduler(
         optimizer,
         num_training_steps=num_training_steps,
-        warmup_ratio=cfg["training"]["warmup_ratio"],
+        warmup_steps=cfg["training"].get("warmup_steps"),
+        warmup_ratio=cfg["training"].get("warmup_ratio"),
     )
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -124,6 +125,7 @@ def main():
         grad_clip=cfg["training"].get("grad_clip", 1.0),
         output_dir=cfg.get("output", {}).get("dir"),
         task_type=task_type,
+        label_smoothing=cfg["training"].get("label_smoothing", 0.0),
     )
     trainer.train()
     print(f"best eval metric: {trainer.best_metric}")

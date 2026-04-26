@@ -22,10 +22,12 @@ class Trainer:
         grad_clip=1.0,
         output_dir=None,
         task_type="classification",
+        label_smoothing=0.0,
     ):
         if task_type not in ("classification", "causal_lm"):
             raise ValueError(f"unknown task_type {task_type!r}")
         self.task_type = task_type
+        self.label_smoothing = label_smoothing
         self.model = model.to(device)
         self.train_loader = DataLoader(
             train_dataset, batch_size=batch_size, shuffle=True, drop_last=False
@@ -60,6 +62,24 @@ class Trainer:
             self._maybe_save_best(metrics)
         return self.history
 
+    def _train_loss(self, batch, out):
+        """Loss used for backprop. Applies label smoothing for causal_lm if configured.
+
+        Eval still uses `out.loss` directly so reported perplexity reflects true CE,
+        not smoothed CE (which would be misleadingly low).
+        """
+        if self.label_smoothing > 0 and self.task_type == "causal_lm":
+            # GPT-2-style shift: predict token i+1 from positions 0..i.
+            shift_logits = out.logits[..., :-1, :].contiguous()
+            shift_labels = batch["labels"][..., 1:].contiguous()
+            return torch.nn.functional.cross_entropy(
+                shift_logits.view(-1, shift_logits.size(-1)),
+                shift_labels.view(-1),
+                ignore_index=-100,
+                label_smoothing=self.label_smoothing,
+            )
+        return out.loss
+
     def _train_one_epoch(self, epoch):
         self.model.train()
         running_loss = 0.0
@@ -68,7 +88,7 @@ class Trainer:
         for batch in pbar:
             batch = self._move_to_device(batch)
             out = self.model(**batch)
-            loss = out.loss
+            loss = self._train_loss(batch, out)
 
             self.optimizer.zero_grad()
             loss.backward()

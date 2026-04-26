@@ -92,10 +92,17 @@ def score_e2e_official(pred_path, refs_path, e2e_metrics_path):
     if not script.exists():
         raise FileNotFoundError(f"measure_scores.py not found at {script}")
 
-    result = subprocess.run(
-        [sys.executable, str(script), str(refs_path), str(pred_path)],
-        capture_output=True, text=True, check=True,
-    )
+    cmd = [sys.executable, str(script), str(refs_path), str(pred_path)]
+    print(f"  $ {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"measure_scores.py exited with code {result.returncode}\n"
+            f"--- stdout ---\n{result.stdout}\n"
+            f"--- stderr ---\n{result.stderr}\n"
+            f"To debug, run the command above directly in a shell."
+        )
+
     metrics = {}
     for line in result.stdout.splitlines():
         m = re.match(r"^([A-Za-z_]+):\s+([\d.]+)\s*$", line.strip())
@@ -106,7 +113,9 @@ def score_e2e_official(pred_path, refs_path, e2e_metrics_path):
                 metrics[key] = val
     if len(metrics) < 5:
         raise RuntimeError(
-            f"Failed to parse all 5 metrics. measure_scores stdout was:\n{result.stdout}"
+            f"Failed to parse all 5 metrics from measure_scores.py output.\n"
+            f"--- stdout ---\n{result.stdout}\n"
+            f"--- stderr ---\n{result.stderr}"
         )
     return metrics
 
