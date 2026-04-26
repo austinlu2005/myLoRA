@@ -1,0 +1,62 @@
+{
+  "task": "e2e_nlg",
+  "best_perplexity": 2.8909894612930516,
+  "wall_seconds": 12558.349229097366,
+  "history": [
+    {
+      "epoch": 0,
+      "eval_loss": 1.1590007559893882,
+      "perplexity": 3.18674734642145
+    },
+    {
+      "epoch": 1,
+      "eval_loss": 1.1077738732916036,
+      "perplexity": 3.027611041189066
+    },
+    {
+      "epoch": 2,
+      "eval_loss": 1.0822574590166953,
+      "perplexity": 2.9513345533405766
+    },
+    {
+      "epoch": 3,
+      "eval_loss": 1.0675476442461145,
+      "perplexity": 2.908238711740781
+    },
+    {
+      "epoch": 4,
+      "eval_loss": 1.0615988176775306,
+      "perplexity": 2.8909894612930516
+    },
+    {
+      "epoch": 5,
+      "eval_loss": 1.0611550928386924,
+      "perplexity": 2.889706942024127
+    },
+    {
+      "epoch": 6,
+      "eval_loss": 1.0575665645811656,
+      "perplexity": 2.879355730921644
+    },
+    {
+      "epoch": 7,
+      "eval_loss": 1.0523444782585314,
+      "perplexity": 2.8643586787726707
+    }
+  ],
+  "hparams": {
+    "lr": 0.0002,
+    "batch_size": 16,
+    "num_epochs": 5,
+    "max_length": 512
+  },
+  "common": {
+    "rank": 4,
+    "alpha": 32,
+    "dropout": 0.1,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.06,
+    "seed": 42,
+    "grad_clip": 1.0
+  }
+}

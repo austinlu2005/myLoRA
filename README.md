@@ -85,6 +85,7 @@ the paper's reported numbers with a Δ column.
 ## Authors
 
 Austin Lu — CS 4782, Spring 2026.
+Jason Chen - CS 4782, Spring 2026.
 
 ## References
 
