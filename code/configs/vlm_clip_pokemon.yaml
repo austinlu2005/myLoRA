@@ -1,0 +1,32 @@
+model:
+  name: openai/clip-vit-base-patch32
+  type: clip
+  tower: both
+
+task:
+  name: image_text_retrieval
+  dataset: lambdalabs/pokemon-blip-captions
+  split: train
+  max_samples: 800
+  eval_ratio: 0.2
+  max_text_length: 77
+  primary_metric: mean_recall@1
+  recall_at: [1, 5]
+
+lora:
+  rank: 8
+  alpha: 16
+  dropout: 0.1
+
+training:
+  batch_size: 16
+  num_epochs: 8
+  lr: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  grad_clip: 1.0
+  seed: 42
+  log_steps: 10
+
+output:
+  dir: ./runs/vlm_clip_pokemon

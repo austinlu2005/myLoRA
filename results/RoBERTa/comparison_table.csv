@@ -1,0 +1,9 @@
+task,metric,paper,ours,delta,wall_min
+mnli,accuracy,87.5,87.9,+0.4,615.2
+sst2,accuracy,95.1,94.8,-0.3,209.6
+mrpc,accuracy,89.7,88.2,-1.5,24.8
+cola,matthews_correlation,63.4,62.3,-1.1,37.5
+qnli,accuracy,93.3,92.8,-0.5,138.5
+qqp,accuracy,90.8,90.8,+0.0,489.2
+rte,accuracy,86.6,79.1,-7.5,44.8
+stsb,pearson,91.5,90.9,-0.6,13.4

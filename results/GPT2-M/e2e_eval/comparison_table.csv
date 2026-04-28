@@ -1,0 +1,3 @@
+system,BLEU,NIST,METEOR,ROUGE_L,CIDEr
+"GPT-2 M (LoRA, paper Table 3)",70.40,8.85,46.00,71.80,2.53
+"GPT-2 M (LoRA, ours)",65.78,8.41,45.61,70.49,2.42

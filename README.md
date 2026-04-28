@@ -13,8 +13,8 @@ only the `W_q` and `W_v` attention projections get LoRA adapters, training
 
 This repo contains a clean implementation of the LoRA primitives
 (`LoRALinear`, `LoRAConv1D`), the module-replacement injection logic, GLUE
-data pipelines, metrics, and a generic training loop — all callable from a
-Colab T4 notebook.
+data pipelines, retrieval metrics, and training loops for both language-only
+and compact vision-language experiments — all callable from Colab notebooks.
 
 ## Repository structure
 
@@ -26,14 +26,14 @@ project_LoRA/
 ├── code/                  # all re-implementation code
 │   ├── requirements.txt
 │   ├── lora/              # LoRALinear / LoRAConv1D, inject, merge, save/load
-│   ├── models/            # architecture wrappers (RoBERTa here)
-│   ├── dataloaders/       # GLUE loader (named to avoid colliding with root data/)
-│   ├── evaluation/        # GLUE metrics
-│   ├── training/          # generic Trainer, optimizer, scheduler
+│   ├── models/            # architecture wrappers (RoBERTa / GPT-2 / CLIP)
+│   ├── dataloaders/       # GLUE / text-gen / image-text loaders
+│   ├── evaluation/        # GLUE / retrieval metrics
+│   ├── training/          # generic Trainer + CLIP retrieval trainer
 │   ├── utils/             # config, seed, param helpers
 │   ├── configs/           # YAML experiment configs
-│   ├── scripts/           # CLI entrypoints (train / evaluate / merge)
-│   ├── notebook/          # Colab-ready notebook for T4
+│   ├── scripts/           # CLI entrypoints (train / evaluate / merge / VLM)
+│   ├── notebook/          # Colab-ready notebooks for T4 / L4
 │   ├── tests/             # unit tests
 ├── data/                  # README with data acquisition instructions
 ├── results/               # figures, tables, logs from our runs
@@ -60,10 +60,10 @@ one-liner that pre-caches every GLUE task.
 
 ### Option A — Colab (recommended, T4 GPU)
 
-Open `code/notebook/lora_roberta_glue.ipynb` in Colab. The notebook walks
-through uploading the zipped `code/` folder, installing dependencies,
-training one or more GLUE tasks, and compiling a Table 2–style results
-DataFrame.
+Open `code/notebook/lora_roberta_glue.ipynb` in Colab for the RoBERTa GLUE
+replication, `code/notebook/lora_gpt2_medium.ipynb` for GPT-2 generation, or
+`code/notebook/lora_clip_vlm_retrieval.ipynb` for the CLIP vision-language
+extension.
 
 ### Option B — local / server CLI
 
@@ -75,6 +75,13 @@ python scripts/train.py --config configs/roberta_base_mrpc.yaml
 Swap the config path to run SST-2, CoLA, etc. (see `code/configs/`). Hyperparameters
 (rank, α, dropout, learning rate, epochs, max length) all live in the YAML —
 nothing is hardcoded in Python.
+
+For the CLIP vision-language extension:
+
+```bash
+cd code
+python scripts/train_vlm_lora_clip.py --config configs/vlm_clip_pokemon.yaml
+```
 
 ## Results
 

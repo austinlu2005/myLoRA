@@ -1,0 +1,32 @@
+{
+  "metrics": {
+    "BLEU": 0.6578,
+    "NIST": 8.4095,
+    "METEOR": 0.4561,
+    "ROUGE_L": 0.7049,
+    "CIDEr": 2.4231
+  },
+  "paper": {
+    "BLEU": 0.704,
+    "NIST": 8.85,
+    "METEOR": 0.46,
+    "ROUGE_L": 0.718,
+    "CIDEr": 2.53
+  },
+  "config": {
+    "lora_path": "/content/lora_best.pt",
+    "model_name": "gpt2-medium",
+    "rank": 4,
+    "alpha": 32,
+    "dropout": 0.1,
+    "output_dir": "/content/e2e_eval",
+    "e2e_metrics": "/content/e2e-metrics",
+    "max_eval": 0,
+    "beam_size": 10,
+    "length_penalty": 0.9,
+    "no_repeat_ngram_size": 4,
+    "max_new_tokens": 80
+  },
+  "n_unique_mrs": 630,
+  "scoring_backend": "official"
+}

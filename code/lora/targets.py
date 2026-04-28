@@ -2,6 +2,7 @@
 TARGET_MODULES = {
     "roberta": ["query", "value"],  # paper default for BERT/RoBERTa
     "gpt2":    ["c_attn"],           # GPT-2 fuses q,k,v into one Conv1D
+    "clip":    ["q_proj", "v_proj"],
     "llama":   ["q_proj", "v_proj"],
     "llava":   ["q_proj", "v_proj"], # typically only language tower
     "clip_vision": ["q_proj", "v_proj"],
