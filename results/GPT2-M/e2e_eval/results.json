@@ -1,10 +1,10 @@
 {
   "metrics": {
-    "BLEU": 0.6578,
-    "NIST": 8.4095,
-    "METEOR": 0.4561,
-    "ROUGE_L": 0.7049,
-    "CIDEr": 2.4231
+    "BLEU": 0.6978,
+    "NIST": 8.79,
+    "METEOR": 0.4562,
+    "ROUGE_L": 0.7129,
+    "CIDEr": 2.48
   },
   "paper": {
     "BLEU": 0.704,
